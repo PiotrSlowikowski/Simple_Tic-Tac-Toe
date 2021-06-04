@@ -5,22 +5,38 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         // write your code here
+
         Grid grid = new Grid();
-        char[][] createdGrid = grid.createGrid();
-        grid.printGrid(createdGrid);
-        grid.validateMove(createdGrid);
-        grid.printGrid(createdGrid);
+        grid.gameInit();
 
-
-//        grid.checkGameState(createdGrid);
     }
 }
 
 class Grid {
+    private static int moveCounter = 0;
 
+    public static void gameInit() {
+
+        char[][] createdGrid = createGrid();
+        printGrid(createdGrid);
+
+
+        while (true) {
+            validateMove(createdGrid);
+            printGrid(createdGrid);
+            if (checkWinConditions(createdGrid)) {
+                break;
+            } else if (checkDraw(createdGrid)) {
+                break;
+            }
+
+        }
+
+    }
 
     public static void validateMove(char[][] grid) {
 
+        char playerSign = 'X';
 
         while (true) {
             Scanner scanner = new Scanner(System.in);
@@ -55,7 +71,15 @@ class Grid {
                 System.out.println("This cell is occupied! Choose another one!");
                 continue;
             }
-            grid[xCoordinate - 1][yCoordinate - 1] = 'X';
+
+            if (moveCounter % 2 == 0) {
+                playerSign = 'X';
+            } else {
+                playerSign = 'O';
+            }
+
+                grid[xCoordinate - 1][yCoordinate - 1] = playerSign;
+            moveCounter++;
             break;
         }
 
@@ -82,16 +106,16 @@ class Grid {
     }
 
 
-    public static void checkGameState(char[][] grid) {
+    public static boolean checkGameState(char[][] grid) {
 
-
+        boolean isEndCondition = false;
         if (checkFiguresCountCorrectness(grid) && checkIfOnlyOneWinPatternExists(grid)) {
             if (!checkWinConditions(grid)) {
                 checkDraw(grid);
-                checkIfGameIsFinished(grid);
+                isEndCondition = true;
             }
         }
-
+        return isEndCondition;
     }
 
     public static boolean checkIfOnlyOneWinPatternExists(char[][] grid) {
@@ -100,9 +124,9 @@ class Grid {
         int patternCounter = 0;
 
         for (int i = 0; i < grid.length; i++) {
-            if (grid[i][0] == grid[i][1] && grid[i][1] == grid[i][2]) {
+            if ((grid[i][0] == grid[i][1] && grid[i][1] == grid[i][2]) && grid[i][0] != '_') {
                 patternCounter++;
-            } else if (grid[0][i] == grid[1][i] && grid[1][i] == grid[2][i]) {
+            } else if ((grid[0][i] == grid[1][i] && grid[1][i] == grid[2][i]) && grid[0][i] != '_') {
                 patternCounter++;
             }
         }
@@ -120,10 +144,12 @@ class Grid {
 
     public static int checkNumberOfDiagonalPatterns(char[][] grid) {
         int counter = 0;
-        if (grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2]) {
+
+
+        if ((grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2]) && grid[0][0] != '_') {
             counter++;
         }
-        if (grid[2][0] == grid[1][1] && grid[1][1] == grid[0][2]) {
+        if ((grid[2][0] == grid[1][1] && grid[1][1] == grid[0][2]) && grid[0][0] != '_') {
             counter++;
         }
         return counter;
@@ -169,7 +195,7 @@ class Grid {
 
         boolean isGameDraw = false;
 
-        if (!checkWinConditions(grid) && !checkForEmptyCells(grid)) {
+        if (!checkForEmptyCells(grid)) {
             System.out.println("Draw");
             isGameDraw = true;
         }
@@ -182,19 +208,19 @@ class Grid {
         boolean isWinConditionPresent = false;
 
         for (int i = 0; i < grid.length; i++) {
-            if (grid[i][0] == grid[i][1] && grid[i][1] == grid[i][2]) {
+            if ((grid[i][0] == grid[i][1] && grid[i][1] == grid[i][2]) && grid[i][0] != '_') {
                 System.out.println(grid[i][0] + " wins");
                 isWinConditionPresent = !isWinConditionPresent;
                 break;
-            } else if (grid[0][i] == grid[1][i] && grid[1][i] == grid[2][i]) {
+            } else if ((grid[0][i] == grid[1][i] && grid[1][i] == grid[2][i]) && grid[0][i] != '_') {
                 System.out.println(grid[0][i] + " wins");
                 isWinConditionPresent = !isWinConditionPresent;
                 break;
-            } else if (grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2]) {
+            } else if ((grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2]) && grid[0][0] != '_') {
                 System.out.println(grid[0][0] + " wins");
                 isWinConditionPresent = !isWinConditionPresent;
                 break;
-            } else if (grid[2][0] == grid[1][1] && grid[1][1] == grid[0][2]) {
+            } else if ((grid[2][0] == grid[1][1] && grid[1][1] == grid[0][2]) && grid[2][0] != '_') {
                 System.out.println(grid[2][0] + " wins");
                 isWinConditionPresent = !isWinConditionPresent;
                 break;
@@ -232,17 +258,11 @@ class Grid {
 
     public static char[][] createGrid() {
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter cells: ");
-        String inputCells = scanner.nextLine();
-
         char[][] field = new char[3][3];
-        int counter = 0;
 
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
-                field[i][j] = inputCells.charAt(counter);
-                counter++;
+                field[i][j] = '_';
             }
         }
         return field;
