@@ -21,78 +21,57 @@ class Grid {
 
     public static void validateMove(char[][] grid) {
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the coordinates: ");
 
-        String coordinates = scanner.nextLine();
-        String[] splittedCoordinates = coordinates.split(" ");
-        String xStringCoordinate = splittedCoordinates[0];
-        String yStringCoordinate = splittedCoordinates[1];
+        while (true) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Enter the coordinates: ");
+            String coordinates = scanner.nextLine();
+            String[] splittedCoordinates = coordinates.split(" ");
 
-        while (!checkIfCoordinateIsANumber(xStringCoordinate)) {
-            System.out.println("You should enter numbers!");
-            coordinates = scanner.nextLine();
-            splittedCoordinates = coordinates.split(" ");
-            xStringCoordinate = splittedCoordinates[0];
-            yStringCoordinate = splittedCoordinates[1];
-        }
-
-        while (!checkIfCoordinateIsANumber(yStringCoordinate)) {
-            System.out.println("You should enter numbers!");
-            coordinates = scanner.nextLine();
-            splittedCoordinates = coordinates.split(" ");
-            xStringCoordinate = splittedCoordinates[0];
-            yStringCoordinate = splittedCoordinates[1];
-        }
-
-        int xCoordinate = Integer.parseInt(xStringCoordinate);
-        int yCoordinate = Integer.parseInt(yStringCoordinate);
-
-
-        while (!checkIfCoordinatesInRange(grid, xCoordinate, yCoordinate) || !checkIfFieldIsEmpty(grid, xCoordinate, yCoordinate) || !checkIfCoordinateIsANumber(Integer.toString(xCoordinate)) || !checkIfCoordinateIsANumber(Integer.toString(yCoordinate))) {
-
-            if (!checkIfCoordinateIsANumber(Integer.toString(xCoordinate)) || !checkIfCoordinateIsANumber(Integer.toString(yCoordinate))) {
+            if (splittedCoordinates.length < 2) {
                 System.out.println("You should enter numbers!");
-                coordinates = scanner.nextLine();
-                splittedCoordinates = coordinates.split(" ");
-                xStringCoordinate = splittedCoordinates[0];
-                yStringCoordinate = splittedCoordinates[1];
-                xCoordinate = Integer.parseInt(xStringCoordinate);
-                yCoordinate = Integer.parseInt(yStringCoordinate);
-            } else if (!checkIfCoordinatesInRange(grid, xCoordinate, yCoordinate)) {
-                System.out.println("Coordinates should be from 1 to 3!");
-                System.out.print("Enter the coordinates: ");
-                coordinates = scanner.nextLine();
-                splittedCoordinates = coordinates.split(" ");
-                xStringCoordinate = splittedCoordinates[0];
-                yStringCoordinate = splittedCoordinates[1];
-                xCoordinate = Integer.parseInt(xStringCoordinate);
-                yCoordinate = Integer.parseInt(yStringCoordinate);
-            } else if (!checkIfFieldIsEmpty(grid, xCoordinate, yCoordinate)) {
-                System.out.println("This cell is occupied! Choose another one!");
-                System.out.print("Enter the coordinates: ");
-                coordinates = scanner.nextLine();
-                splittedCoordinates = coordinates.split(" ");
-                xStringCoordinate = splittedCoordinates[0];
-                yStringCoordinate = splittedCoordinates[1];
+                continue;
+            }
+
+            String xStringCoordinate = splittedCoordinates[0];
+            String yStringCoordinate = splittedCoordinates[1];
+            int xCoordinate;
+            int yCoordinate;
+
+            if (!checkIfCoordinateIsANumber(xStringCoordinate, yStringCoordinate)) {
+                System.out.println("You should enter numbers!");
+                continue;
+            } else {
                 xCoordinate = Integer.parseInt(xStringCoordinate);
                 yCoordinate = Integer.parseInt(yStringCoordinate);
             }
+
+            if (!checkIfCoordinatesInRange(grid, xCoordinate) || !checkIfCoordinatesInRange(grid, yCoordinate)) {
+                System.out.println("Coordinates should be from 1 to 3!");
+                continue;
+            }
+
+            if (!checkIfFieldIsEmpty(grid, xCoordinate, yCoordinate)) {
+                System.out.println("This cell is occupied! Choose another one!");
+                continue;
+            }
+            grid[xCoordinate - 1][yCoordinate - 1] = 'X';
+            break;
         }
 
-        grid[xCoordinate - 1][yCoordinate - 1] = 'X';
 
     }
 
-    public static boolean checkIfCoordinateIsANumber(String StringCoordinate) {
-        if (StringCoordinate.matches("\\d") || StringCoordinate.matches("\\d\\d")) {
+    public static boolean checkIfCoordinateIsANumber(String xStringCoordinate, String yStringCoordinate) {
+        if ((xStringCoordinate.matches("\\d") || xStringCoordinate.matches("\\d\\d")) &&
+                (yStringCoordinate.matches("\\d") || yStringCoordinate.matches("\\d\\d"))) {
             return true;
         }
         return false;
     }
 
-    public static boolean checkIfCoordinatesInRange(char[][] grid, int xCoordinate, int yCoordinate) {
-        if (xCoordinate <= grid[0].length && yCoordinate <= grid.length) {
+    public static boolean checkIfCoordinatesInRange(char[][] grid, int xyCoordinate) {
+        if (xyCoordinate <= grid[0].length && xyCoordinate <= grid.length) {
             return true;
         }
         return false;
